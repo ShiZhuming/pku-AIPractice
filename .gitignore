@@ -1,2 +1,6 @@
 *.png
 *.jpg
+*.synctex.gz
+*.aux
+*.log
+*.synctex(busy)
