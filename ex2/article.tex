@@ -1,0 +1,94 @@
+\documentclass[12pt,AutoFakeBold]{article}
+\usepackage[a4paper]{geometry}%纸张大小和页边距
+\geometry{left=2.0cm,right=2.0cm,top=2.0cm,bottom=2.0cm}%页边距设置
+
+\title{AI引论第二次小班课作业}
+\author{信息科学技术学院\ 施朱鸣\ 1800011723}
+\date{2020年4月7日}
+
+\usepackage{setspace}% 控制行距
+\renewcommand{\baselinestretch}{1.5}% 1.5倍行距
+
+\usepackage{fontspec}%控制字体
+\setmainfont{Times New Roman}%英文字体
+\newfontfamily\arial{Arial}%Arial字体
+\usepackage{xeCJK}%控制中文
+\setCJKmainfont{SimSun}%中文字体
+\XeTeXlinebreaklocale "zh"%中文自动换行
+\XeTeXlinebreakskip = 0pt plus 1pt%中文自动换行
+\usepackage{indentfirst}%中文缩进
+\setlength{\parindent}{2em}
+
+\usepackage{amsthm,amsmath,amssymb,mathrsfs}%数学符号和花体支持
+\usepackage{booktabs}%绘制三线表
+\usepackage{latexsym}%绘制特殊数学符号
+\usepackage{siunitx}%数学模式中使用SI单位
+
+\usepackage{xcolor}%高亮使用的颜色
+\definecolor{commentcolor}{RGB}{85,139,78}
+\definecolor{stringcolor}{RGB}{206,145,108}
+\definecolor{keywordcolor}{RGB}{34,34,250}
+\definecolor{backcolor}{RGB}{220,220,220}
+
+\usepackage{accsupp}%不知道是什么
+\newcommand{\emptyaccsupp}[1]{\BeginAccSupp{ActualText={}}#1\EndAccSupp{}}
+
+\usepackage{listings}%代码高亮
+\lstset{
+    language=python, 					%Python语法高亮
+	linewidth=0.9\linewidth,      		%列表list宽度
+	%basicstyle=\ttfamily,				%tt无法显示空格
+	commentstyle=\color{commentcolor},	%注释颜色
+	keywordstyle=\color{keywordcolor},	%关键词颜色
+	stringstyle=\color{stringcolor},	%字符串颜色
+	%showspaces=true,					%显示空格
+	numbers=left,						%行数显示在左侧
+	numberstyle=\tiny\emptyaccsupp,		%行数数字格式
+	numbersep=5pt,						%数字间隔
+	frame=single,						%加框
+	framerule=0pt,						%不划线
+	escapeinside=@@,					%逃逸标志
+	emptylines=1,						%
+	xleftmargin=3em,					%list左边距
+	backgroundcolor=\color{backcolor},	%列表背景色
+	tabsize=4,							%制表符长度为4个字符
+	gobble=4							%忽略每行代码前4个字符                                        % 设置语言
+}
+
+\begin{document}
+    \maketitle
+    \section{预处理}
+    根据数据集的结构，我们设计了如下的程序来读入测试集数据。
+    \begin{lstlisting}[language=python]
+        f = open('train-images.idx3-ubyte','rb')
+        file = f.read()
+        magic_number = file[:4]
+        print(int.from_bytes(magic_number, byteorder='big', signed=True))
+        training = []
+        for count in range(30):
+            image = [item for item in file[16 + 784 * count : 16 + 784 * (count + 1)]]
+            # image_np = np.array(image, dtype = np.uint8).reshape(28,28,1)
+            # sift = cv.xfeatures2d.SIFT_create(20)
+            # kp, des = sift.detectAndCompute(image_np,None)
+            # training.append(des)
+            # print(kp)
+            # plt.ion()
+            # plt.imshow(image_np.reshape(28, 28))
+            # plt.pause(1)
+            # drawkp = cv.drawKeypoints(image_np,kp,image_np)
+            # plt.imshow(drawkp)
+            # plt.pause(5)
+            image_np = np.array(image, dtype = np.uint8)
+            training.append(image_np)
+        training_np = np.array(training)
+    \end{lstlisting}
+    \section{对训练集的处理}
+    我们把每张图片处理成一个784维的向量，用向量的欧氏距离度量图片之间的相似程度。我们采用K-Means聚类的方法对于训练集的7000张图片进行聚类，共聚成10类，统计每一类中图片对应的数字（标签），计算该类中出现频率最高的数字（标签）作为该类对应的数字结果。
+    \section{对测试集手写数字图片的识别}
+    对于测试集的数据，我们考察每一个手写数字图像和10个聚类中心的欧氏距离，取其中最近的一个聚类中心作为这张手写数字图像的归属，而这个聚类中心对应的簇的数字标签即为该手写数字图像对应的数字。这样我们就实现了识别手写数字的任务。
+    \section{实验结果}
+    由于笔者时间安排不当，实验程序未能完整实现，实验数据尚未取得，其jupyter notebook文件附在报告后。
+    \section{展望}
+    我们也尝试了使用图像的sift特征矢量集合来代替图像本身784维矢量进行聚类，上面代码中注释的部分实现了sift特征的提取。但是不同图像的sift特征点的数量有差异，笔者不知道如何将不同个数的128维sift特征矢量整合成一个能充分描述该图片特性的矢量，这一点有待进一步工作，也希望能得到老师和助教的指点。谢谢！
+    
+\end{document}
