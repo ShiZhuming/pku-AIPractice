@@ -1,0 +1,298 @@
+\documentclass[12pt,AutoFakeBold]{article}
+\usepackage[a4paper]{geometry}%纸张大小和页边距
+\geometry{left=2.0cm,right=2.0cm,top=2.0cm,bottom=2.0cm}%页边距设置
+
+\title{AI引论第九次大班课作业}
+\author{信息科学技术学院\ 施朱鸣\ 1800011723}
+\date{2020年4月11日}
+
+\usepackage{setspace}% 控制行距
+\renewcommand{\baselinestretch}{1.5}% 1.5倍行距
+
+\usepackage{fontspec}%控制字体
+\setmainfont{Times New Roman}%英文字体
+\newfontfamily\arial{Arial}%Arial字体
+\usepackage{xeCJK}%控制中文
+\setCJKmainfont{SimSun}%中文字体
+\XeTeXlinebreaklocale "zh"%中文自动换行
+\XeTeXlinebreakskip = 0pt plus 1pt%中文自动换行
+\usepackage{indentfirst}%中文缩进
+\setlength{\parindent}{2em}
+
+\usepackage{amsthm,amsmath,amssymb,mathrsfs}%数学符号和花体支持
+\usepackage{booktabs}%绘制三线表
+\usepackage{latexsym}%绘制特殊数学符号
+\usepackage{siunitx}%数学模式中使用SI单位
+
+\usepackage{xcolor}%高亮使用的颜色
+\definecolor{commentcolor}{RGB}{85,139,78}
+\definecolor{stringcolor}{RGB}{206,145,108}
+\definecolor{keywordcolor}{RGB}{34,34,250}
+\definecolor{backcolor}{RGB}{220,220,220}
+
+\usepackage{accsupp}%不知道是什么
+\newcommand{\emptyaccsupp}[1]{\BeginAccSupp{ActualText={}}#1\EndAccSupp{}}
+
+\usepackage{listings}%代码高亮
+\lstset{
+    language=python, 					%Python语法高亮
+	linewidth=0.9\linewidth,      		%列表list宽度
+	%basicstyle=\ttfamily,				%tt无法显示空格
+	commentstyle=\color{commentcolor},	%注释颜色
+	keywordstyle=\color{keywordcolor},	%关键词颜色
+	stringstyle=\color{stringcolor},	%字符串颜色
+	%showspaces=true,					%显示空格
+	numbers=left,						%行数显示在左侧
+	numberstyle=\tiny\emptyaccsupp,		%行数数字格式
+	numbersep=5pt,						%数字间隔
+	frame=single,						%加框
+	framerule=0pt,						%不划线
+	escapeinside=@@,					%逃逸标志
+	emptylines=1,						%
+	xleftmargin=3em,					%list左边距
+	backgroundcolor=\color{backcolor},	%列表背景色
+	tabsize=4,							%制表符长度为4个字符
+	gobble=4							%忽略每行代码前4个字符                                        % 设置语言
+}
+
+\begin{document}
+    \maketitle
+    \section*{第1题}
+    进行1个单位宽度的0-边界填充后的图像如下
+    \begin{center}
+        \begin{tabular}{|c|c|c|c|c|c|}
+            % \centering
+            \hline
+            0&0&0&0&0&0\\
+            \hline
+            0&0&1&1&0&0\\
+            \hline
+            0&0&1&1&0&0\\
+            \hline
+            0&0&2&2&0&0\\
+            \hline
+            0&1&1&1&1&0\\
+            \hline
+            0&0&0&0&0&0\\
+            \hline
+        \end{tabular}
+    \end{center}
+
+    以1个单元为步长，对每个点做卷积
+    \[y=\sum_i x_i\textbf{w}_i\]
+
+    得到如下结果，即为\(I'\)各个位置对应的像素值
+    \begin{center}
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            -2&-2&2&2\\
+            \hline
+            -3&-3&3&3\\
+            \hline
+            -3&-2&2&3\\
+            \hline
+            -1&0&0&1\\
+            \hline
+        \end{tabular}
+    \end{center}
+
+    \section*{第2题}
+    对于每个像素点，其\(\hat{I}-I'\)对应的矩阵如下
+
+    \begin{center}
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            0&0&0&0\\
+            \hline
+            -1&-1&1&1\\
+            \hline
+            -1&-1&1&1\\
+            \hline
+            -2&-2&2&2\\
+            \hline
+        \end{tabular}
+    \end{center}
+
+    用\(\mathcal{L}\)表示均方差损失函数，则
+    \begin{equation}
+        \begin{split}
+            \mathcal{L} &= \sum_{(m,n)} (\hat{x}_{m,n} - {x'}_{m,n})^2\\
+            &= \frac{1}{16}\left(0^2 + 0^2 + 0^2 + 0^2 + 1^2 + 1^2 +1^2 +1^2 +1^2 + 1^2 +1^2 +1^2 + 2^2 + 2^2 + 2^2 + 2^2 \right)\\
+            &= \frac{3}{2}\\
+            &= 1.5
+        \end{split}
+    \end{equation}
+
+    假设\(K_{i,j}\)中的\(i,j\)都从0开始取值，则
+
+    \begin{equation}
+        \mathcal{L} = \sum_{1 \leq m,n \leq 4} (\hat{x}_{m,n} - {x'}_{m,n})^2
+    \end{equation}
+
+    \begin{equation}
+        \begin{split}
+            \frac{\partial \mathcal{L}}{\partial K_{i,j}} &= \sum_{1\leq m,n \leq 4} \frac{\partial \left(\hat{x}_{m,n} - {x'}_{m,n}\right)^2}{\partial K_{i,j}}\\
+            &= 2\sum_{1\leq m,n \leq 4} \frac{\partial \left(\hat{x}_{m,n} - {x'}_{m,n}\right)^2}{\partial \left(\hat{x}_{m,n} - {x'}_{m,n}\right)}\frac{\partial \left(\hat{x}_{m,n} - {x'}_{m,n}\right)}{\partial K_{i,j}}\\
+            &= 2\sum_{1\leq m,n \leq 4} \left(\hat{x}_{m,n} - {x'}_{m,n}\right)\times (-1)\frac{\partial {x'}_{m,n}}{\partial K_{i,j}}\\
+            &= 2\sum_{1\leq m,n \leq 4} \left(\hat{x}_{m,n} - {x'}_{m,n}\right)\times (-1)\frac{\partial \sum_{0 \leq p,q\leq 2} x_{m-1+p,m-1+q}K_{p,q}}{\partial K_{i,j}}\\
+            &= 2\sum_{1\leq m,n \leq 4} \left(\hat{x}_{m,n} - {x'}_{m,n}\right)\times (-1)\times x_{m-1+i,m-1+j}
+        \end{split}
+    \end{equation}
+
+    用上面的计算方法得出卷积核各点的\(\frac{\partial \mathcal{L}}{\partial K_{i,j}}\)如下矩阵
+
+    \begin{center}
+        \begin{tabular}{|c|c|c|}
+            \hline
+            -12&0&12\\
+            \hline
+            -8&0&8\\
+            \hline
+            -5&0&5\\
+            \hline
+        \end{tabular}
+    \end{center}
+
+    \section*{第3题}
+    对于已经求得的梯度矩阵，利用如下式子更新卷积核参数
+    \[\hat{K_{i,j}} = K_{i,j} - \eta\frac{\partial \mathcal{L}}{\partial K_{i,j}}\]
+
+    当\(\eta = 0.01\)时更新后的卷积核参数矩阵如下
+    \begin{center}
+        \begin{tabular}{|c|c|c|}
+            \hline
+            0.12&0&-0.12\\
+            \hline
+            1.08&0&-1.08\\
+            \hline
+            1.05&0&-1.05\\
+            \hline
+        \end{tabular}
+    \end{center}
+
+    再次卷积得到的输出结果如下矩阵
+    \begin{center}
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            -2.13&-2.13&2.13&2.13\\
+            \hline
+            -3.30&-3.30&3.30&3.30\\
+            \hline
+            -3.33&-2.28&2.28&3.33\\
+            \hline
+            -1.32&-0.24&0.24&1.32\\
+            \hline
+        \end{tabular}
+    \end{center}
+
+    用\(\hat{\mathcal{L}}\)表示更新后的均方差损失函数，则
+    \begin{equation}
+        \begin{split}
+            \hat{\mathcal{L}} &= \sum_{(m,n)} (\hat{x}_{m,n} - {x'}_{m,n})^2\\
+            &= 0.988
+        \end{split}
+    \end{equation}
+
+    \section*{附：实现以上计算的Python代码}
+    \begin{lstlisting}[language=python]
+    # To add a new cell, type '# %%'
+    # To add a new markdown cell, type '# %% [markdown]'
+    # %%
+    kernel = [
+                [0, 0, 0],
+                [1, 0, -1],
+                [1, 0, -1]]
+
+
+    # %%
+    I = [
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 1, 0, 0],
+            [0, 0, 1, 1, 0, 0],
+            [0, 0, 2, 2, 0, 0],
+            [0, 1, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0, 0]]
+
+
+    # %%
+    targetI = [
+                [-2, -2, 2, 2],
+                [-4, -4, 4, 4],
+                [-4, -3, 3, 4],
+                [-3, -2, 2, 3]]
+
+
+    # %%
+    outputI = [
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]]
+
+
+    # %%
+    grad = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0]]
+
+
+    # %%
+    # 卷积
+    for i in range(1, 5):
+        for j in range(1, 5):
+            outputI[i-1][j-1] = 0
+            for k in range(3):
+                for l in range(3):
+                    outputI[i-1][j-1] += I[i-1+k][j-1+l] * kernel[k][l]
+    print(outputI)
+
+
+    # %%
+    # 计算均方差
+    MSE = 0
+    for i in range(4):
+        for j in range(4):
+            MSE += (targetI[i][j] - outputI[i][j])**2
+    MSE = float(MSE)/16.0
+    print(MSE)
+
+
+    # %%
+    for i in range(3):
+        for j in range(3):
+            grad[i][j] = 0
+            for k in range(4):
+                for l in range(4):
+                    grad[i][j] += (targetI[k][l] - outputI[k][l])*(-1)*(I[k + i][l + j])
+    print(grad)
+
+
+    # %%
+    eta = 0.01
+    for i in range(3):
+        for j in range(3):
+            kernel[i][j] -= eta * grad[i][j]
+    print(kernel)
+
+
+    # %%
+    for i in range(1, 5):
+        for j in range(1, 5):
+            outputI[i-1][j-1] = 0
+            for k in range(3):
+                for l in range(3):
+                    outputI[i-1][j-1] += I[i-1+k][j-1+l] * kernel[k][l]
+    print(outputI)
+
+
+    # %%
+    MSE = 0
+    for i in range(4):
+        for j in range(4):
+            MSE += (targetI[i][j] - outputI[i][j])**2
+    MSE = float(MSE)/16.0
+    print(MSE)
+    \end{lstlisting}
+
+\end{document}
