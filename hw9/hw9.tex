@@ -11,7 +11,7 @@
 
 \usepackage{fontspec}%控制字体
 \setmainfont{Times New Roman}%英文字体
-\newfontfamily\arial{Arial}%Arial字体
+% \newfontfamily\arial{Arial}%Arial字体
 \usepackage{xeCJK}%控制中文
 \setCJKmainfont{SimSun}%中文字体
 \XeTeXlinebreaklocale "zh"%中文自动换行
@@ -116,7 +116,7 @@
     用\(\mathcal{L}\)表示均方差损失函数，则
     \begin{equation}
         \begin{split}
-            \mathcal{L} &= \sum_{(m,n)} (\hat{x}_{m,n} - {x'}_{m,n})^2\\
+            \mathcal{L} &= \frac{1}{16}\sum_{(m,n)} (\hat{x}_{m,n} - {x'}_{m,n})^2\\
             &= \frac{1}{16}\left(0^2 + 0^2 + 0^2 + 0^2 + 1^2 + 1^2 +1^2 +1^2 +1^2 + 1^2 +1^2 +1^2 + 2^2 + 2^2 + 2^2 + 2^2 \right)\\
             &= \frac{3}{2}\\
             &= 1.5
@@ -126,16 +126,17 @@
     假设\(K_{i,j}\)中的\(i,j\)都从0开始取值，则
 
     \begin{equation}
-        \mathcal{L} = \sum_{1 \leq m,n \leq 4} (\hat{x}_{m,n} - {x'}_{m,n})^2
+        \mathcal{L} = \frac{1}{16}\sum_{1 \leq m,n \leq 4} (\hat{x}_{m,n} - {x'}_{m,n})^2
     \end{equation}
 
     \begin{equation}
         \begin{split}
-            \frac{\partial \mathcal{L}}{\partial K_{i,j}} &= \sum_{1\leq m,n \leq 4} \frac{\partial \left(\hat{x}_{m,n} - {x'}_{m,n}\right)^2}{\partial K_{i,j}}\\
-            &= 2\sum_{1\leq m,n \leq 4} \frac{\partial \left(\hat{x}_{m,n} - {x'}_{m,n}\right)^2}{\partial \left(\hat{x}_{m,n} - {x'}_{m,n}\right)}\frac{\partial \left(\hat{x}_{m,n} - {x'}_{m,n}\right)}{\partial K_{i,j}}\\
-            &= 2\sum_{1\leq m,n \leq 4} \left(\hat{x}_{m,n} - {x'}_{m,n}\right)\times (-1)\frac{\partial {x'}_{m,n}}{\partial K_{i,j}}\\
-            &= 2\sum_{1\leq m,n \leq 4} \left(\hat{x}_{m,n} - {x'}_{m,n}\right)\times (-1)\frac{\partial \sum_{0 \leq p,q\leq 2} x_{m-1+p,m-1+q}K_{p,q}}{\partial K_{i,j}}\\
-            &= 2\sum_{1\leq m,n \leq 4} \left(\hat{x}_{m,n} - {x'}_{m,n}\right)\times (-1)\times x_{m-1+i,m-1+j}
+            \frac{\partial \mathcal{L}}{\partial K_{i,j}} 
+            &= \frac{1}{16}\sum_{1\leq m,n \leq 4} \frac{\partial \left(\hat{x}_{m,n} - {x'}_{m,n}\right)^2}{\partial K_{i,j}}\\
+            &= \frac{1}{16}\times 2\sum_{1\leq m,n \leq 4} \frac{\partial \left(\hat{x}_{m,n} - {x'}_{m,n}\right)^2}{\partial \left(\hat{x}_{m,n} - {x'}_{m,n}\right)}\frac{\partial \left(\hat{x}_{m,n} - {x'}_{m,n}\right)}{\partial K_{i,j}}\\
+            &= \frac{1}{8}\sum_{1\leq m,n \leq 4} \left(\hat{x}_{m,n} - {x'}_{m,n}\right)\times (-1)\frac{\partial {x'}_{m,n}}{\partial K_{i,j}}\\
+            &= \frac{1}{8}\sum_{1\leq m,n \leq 4} \left(\hat{x}_{m,n} - {x'}_{m,n}\right)\times (-1)\frac{\partial \sum_{0 \leq p,q\leq 2} x_{m-1+p,m-1+q}K_{p,q}}{\partial K_{i,j}}\\
+            &= \frac{1}{8}\sum_{1\leq m,n \leq 4} \left(\hat{x}_{m,n} - {x'}_{m,n}\right)\times (-1)\times x_{m-1+i,m-1+j}
         \end{split}
     \end{equation}
 
@@ -144,11 +145,11 @@
     \begin{center}
         \begin{tabular}{|c|c|c|}
             \hline
-            -12&0&12\\
+            -1.5&0.0&1.5\\
             \hline
-            -8&0&8\\
+            -1.0&0.0&1.0\\
             \hline
-            -5&0&5\\
+            -0.625&0.0&0.625\\
             \hline
         \end{tabular}
     \end{center}
@@ -161,11 +162,11 @@
     \begin{center}
         \begin{tabular}{|c|c|c|}
             \hline
-            0.12&0&-0.12\\
+            0.015&0&-0.015\\
             \hline
-            1.08&0&-1.08\\
+            1.01&0&-1.01\\
             \hline
-            1.05&0&-1.05\\
+            1.00625&0&-1.00625\\
             \hline
         \end{tabular}
     \end{center}
@@ -174,13 +175,13 @@
     \begin{center}
         \begin{tabular}{|c|c|c|c|}
             \hline
-            -2.13&-2.13&2.13&2.13\\
+            -2.01625&-2.01625&2.01625&2.01625\\
             \hline
-            -3.30&-3.30&3.30&3.30\\
+            -3.0375&-3.0375&3.0375&3.0375\\
             \hline
-            -3.33&-2.28&2.28&3.33\\
+            -3.04125&-2.035&2.035&3.04125\\
             \hline
-            -1.32&-0.24&0.24&1.32\\
+            -1.04&-0.03&0.03&1.04\\
             \hline
         \end{tabular}
     \end{center}
@@ -189,7 +190,7 @@
     \begin{equation}
         \begin{split}
             \hat{\mathcal{L}} &= \sum_{(m,n)} (\hat{x}_{m,n} - {x'}_{m,n})^2\\
-            &= 0.988
+            &= 1.428
         \end{split}
     \end{equation}
 
@@ -264,7 +265,7 @@
             grad[i][j] = 0
             for k in range(4):
                 for l in range(4):
-                    grad[i][j] += (targetI[k][l] - outputI[k][l])*(-1)*(I[k + i][l + j])
+                    grad[i][j] += ((targetI[k][l] - outputI[k][l])*(-1)*(I[k + i][l + j]))/8.0
     print(grad)
 
 
